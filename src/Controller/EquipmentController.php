@@ -14,10 +14,10 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
- * @Route("/spells", name="spells.")
+ * @Route("/equipment", name="equipment.")
 
  */
-class SpellsController extends AbstractController
+class EquipmentController extends AbstractController
 {
     private $client;
 
@@ -35,7 +35,7 @@ class SpellsController extends AbstractController
     {
         $response = $this->client->request(
             'GET',
-            'https://www.dnd5eapi.co/api/spells'
+            'https://www.dnd5eapi.co/api/equipment'
         );
         $statusCode = $response->getStatusCode();
         // $statusCode = 200
@@ -54,8 +54,8 @@ class SpellsController extends AbstractController
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
         dump($content);
-        return $this->render("spells/index.html.twig", [
-            "spells" => $content["results"]
+        return $this->render("equipment/index.html.twig", [
+            "equipment" => $content["results"]
         ]);
     }
 
@@ -67,11 +67,11 @@ class SpellsController extends AbstractController
      */
     public function details(Request $request): Response
     {
-       $spell = $request->query->get('spell');
+        $item = $request->query->get('item');
 
         $response = $this->client->request(
             'GET',
-            "https://www.dnd5eapi.co".$spell["url"]
+            "https://www.dnd5eapi.co".$item["url"]
         );
         $statusCode = $response->getStatusCode();
         // $statusCode = 200
@@ -90,8 +90,8 @@ class SpellsController extends AbstractController
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
         dump($content);
-        return $this->render("spells/details.html.twig", [
-            "spell" => $content
+        return $this->render("equipment/details.html.twig", [
+            "equipment" => $content
         ]);
     }
 }

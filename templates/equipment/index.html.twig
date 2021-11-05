@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Equipment{% endblock %}
+
+{% block body %}
+    <h1 class="d-flex justify-content-center">Equipment</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for item in equipment %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>
+                    <a href="{{ path('equipment.details', {item: item}) }}">{{ item["name"] }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
