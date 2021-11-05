@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SpellsController!{% endblock %}
+
+{% block body %}
+ <h1>All Spells</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+
+ {% for spell in spells %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>
+                <a href="{{ path('spells.details', {spell: spell}) }}">{{ spell["name"] }}</a>
+            </td>
+        </tr>
+ {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

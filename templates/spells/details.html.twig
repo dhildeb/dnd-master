@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SpellsController!{% endblock %}
+
+{% block body %}
+    <h1 class="d-flex justify-content-center">{{ spell["name"] }}</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th>{{ spell["name"] }}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for key, s in spell %}
+        <tr>
+            {% if key != "index" and key != "url" and key != "name" %}
+                <th scope="col">{{ key }}</th>
+            <td>
+                {% if s is iterable %}
+                    {% for key1, s1 in s %}
+                        {% if s1 is iterable %}
+                            {% for key2, s2 in s1 %}
+                                {% if key2 != "index" and key2 != "url" %}
+                                    {% if key2 != "name" %}
+                                        <b>lvl {{ key2 }}:</b>
+                                    {% endif %}
+                                    {{ s2 }}
+                                    <br>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% if key1 != "index" and key1 != "url" %}
+                                {% if key1 != "name" and key != "components" and key != "desc" and key != "higher_level" %}
+                                    {{ key1 }}:
+                                {% endif %}
+                                {{ s1 }}
+                                <br>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% if key != "index" and key != "url" %}
+                        {% if s == 1 %}
+                            true
+                        {% elseif s == 0 %}
+                            false
+                        {% else %}
+                            {{ s }}
+                        {% endif %}
+                        <br>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+            {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
