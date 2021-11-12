@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Classes{% endblock %}
+
+{% block body %}
+
+        <h1 class="d-flex justify-content-center ">{{ class["name"] }}</h1>
+    <div class="row justify-content-end">
+        <a class="btn btn-primary mb-3 mr-3" href="{{ path('character.create', {class: class}) }}">Make New Character</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th>{{ class["name"] }}</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Hit Die</th>
+                <td>
+                    {{ class['hit_die'] }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">proficiencies</th>
+                <td>
+                    {% for p in class['proficiencies'] %}
+                        {{ p['name'] }},
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">proficiency Choices</th>
+                <td>
+                    <label>choose {{ class['proficiency_choices'][0]['choose'] }}</label>
+                    <br>
+                    <select multiple>
+
+                    {% for p in class['proficiency_choices'][0]['from'] %}
+                        <option>
+                        {{ p['name'] }}
+                        </option>
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Saving Throws</th>
+                <td>
+                    {% for s in class['saving_throws'] %}
+                        {{ s['name'] }},
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Starting Equipment</th>
+                <td>
+                    {% for se in class['starting_equipment'] %}
+                        {{ se['quantity'] }}:
+                        {{ se['equipment']['name'] }},
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Starting Equipment Options</th>
+                <td class="d-flex">
+                    {% for se in class['starting_equipment_options'] %}
+                        <div class="d-flex flex-column px-3">
+                        <label>
+                            Choose {{ se['choose'] }}:
+                        </label>
+                    <select multiple>
+                        {% for i in se['from'] %}
+                            <option class="pr-3">
+                                {{ i['equipment']['name'] ?? i['equipment_option']['from']['equipment_category']['name'] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                        </div>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Levels</th>
+                <th>Features</th>
+            </tr>
+            {% for l in levels %}
+            {% if l['subclass'] is not defined %}
+                    <tr>
+                        <th>{{ l['level'] }}</th>
+                        {% if l['features'] is iterable %}
+                                <td>
+                            {% for f in l['features'] %}
+                                    {{ f['name'] }},
+                            {% endfor %}
+                                </td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

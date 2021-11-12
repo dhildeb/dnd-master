@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Spell;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,10 +13,10 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
- * @Route("/spells", name="spells.")
+ * @Route("/classes", name="classes.")
 
  */
-class SpellsController extends AbstractController
+class ClassesController extends AbstractController
 {
     private $client;
 
@@ -27,20 +26,15 @@ class SpellsController extends AbstractController
     }
 
     /**
-     * @Route("/{search}", name="", defaults={"search"=null})
-     * @param $search
+     * @Route("/", name="")
      * @return Response
      * @throws TransportExceptionInterface
      */
-    public function index($search): Response
+    public function index(): Response
     {
-        $url = 'https://www.dnd5eapi.co/api/spells';
-        if($search){
-            $url = "https://www.dnd5eapi.co/api/classes/$search/spells";
-        }
         $response = $this->client->request(
             'GET',
-            $url
+            'https://www.dnd5eapi.co/api/classes'
         );
         $statusCode = $response->getStatusCode();
         // $statusCode = 200
@@ -58,12 +52,9 @@ class SpellsController extends AbstractController
             $content = $response->toArray();
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
-        if($content['count'] < 1){
-            return $this->redirectToRoute("spells.", ["search" => null]);
-        }
         dump($content);
-        return $this->render("spells/index.html.twig", [
-            "spells" => $content["results"]
+        return $this->render("classes/index.html.twig", [
+            "classes" => $content["results"]
         ]);
     }
 
@@ -75,11 +66,12 @@ class SpellsController extends AbstractController
      */
     public function details(Request $request): Response
     {
-       $spell = $request->query->get('spell');
-
+//  get selected class
+        $class = $request->query->get('class');
+//  get class details from dnd api
         $response = $this->client->request(
             'GET',
-            "https://www.dnd5eapi.co".$spell["url"]
+            "https://www.dnd5eapi.co".$class["url"]
         );
         $statusCode = $response->getStatusCode();
         // $statusCode = 200
@@ -97,9 +89,30 @@ class SpellsController extends AbstractController
             $content = $response->toArray();
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
+//  get class levels from dnd api
+        $response = $this->client->request(
+            'GET',
+            "https://www.dnd5eapi.co/api/classes/$class[index]/levels"
+        );
+        $statusCode = $response->getStatusCode();
+        try {
+            $contentType = $response->getHeaders()['content-type'][0];
+        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
+        }
+        try {
+            $levels = $response->getContent();
+        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
+        }
+        try {
+            $levels = $response->toArray();
+        } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
+        }
+
         dump($content);
-        return $this->render("spells/details.html.twig", [
-            "spell" => $content
+        dump($levels);
+        return $this->render("classes/details.html.twig", [
+            "class" => $content,
+            "levels" => $levels
         ]);
     }
 }

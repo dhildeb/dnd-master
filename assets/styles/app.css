@@ -1,0 +1,25 @@
+:root{
+    --dark: rgba(102, 102, 102, 0.39);
+    --light: rgba(206, 202, 151, 0.411);
+}
+
+a{
+    text-decoration: none !important;
+    color: whitesmoke !important;
+}
+a:hover{
+    transition: all .25s linear !important;
+    filter: brightness(0.2) !important;
+    color: whitesmoke;
+    cursor: pointer;
+}
+
+.bg-main{
+    background-color: rgba(102, 102, 102, 0.39);
+}
+.bg-side{
+    background-color: rgba(206, 202, 151, 0.411);
+}
+.d-grid{
+    display: grid;
+}

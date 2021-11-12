@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Character{% endblock %}
+
+{% block body %}
+    {{ form_start(character_form) }}
+    {{ form_widget(character_form) }}
+    <input class="btn btn-success mb-3" type="submit" name="create_character" value="Adventure!">
+    {{ form_end(character_form) }}
+
+{% endblock %}

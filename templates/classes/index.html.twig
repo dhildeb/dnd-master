@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Classes{% endblock %}
+
+{% block body %}
+    <h1 class="d-flex justify-content-center">Classes</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for class in classes %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>
+                    <a href="{{ path('classes.details', {class: class}) }}">{{ class["name"] }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
