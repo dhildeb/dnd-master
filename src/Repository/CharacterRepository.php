@@ -19,6 +19,21 @@ class CharacterRepository extends ServiceEntityRepository
         parent::__construct($registry, Character::class);
     }
 
+    /**
+     * @return Character[]
+     */
+    public function findAllCharacters(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT characters
+            FROM App\Entity\Character characters'
+        );
+
+        // returns an array of Character objects
+        return $query->getResult();
+    }
     // /**
     //  * @return Character[] Returns an array of Character objects
     //  */

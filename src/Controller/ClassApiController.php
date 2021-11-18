@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -14,9 +13,8 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * @Route("/api/class", name="class.")
-
  */
-class ClassController extends AbstractController
+class ClassApiController extends AbstractController
 {
     private $client;
 
@@ -53,9 +51,7 @@ class ClassController extends AbstractController
             "proficiencies" => ["choose" => [], "options" => [], "primary" => []],
             "saving_throws" => [],
             "starting_equipment" => ["choose" => [], "options" => [], "primary" => []],
-            
-
-    ];
+        ];
         // proficiencies
         foreach ($content['proficiency_choices'] as $proficiencyChoices){
             $optionsArr = [];
@@ -78,7 +74,7 @@ class ClassController extends AbstractController
             $equipmentWithQty = $equipment['quantity'] > 1 ? $equipment['equipment']['name'].' x'.strval($equipment['quantity']) : $equipment['equipment']['name'];
             array_push($dndClass['starting_equipment']['primary'], $equipmentWithQty);
         }
-        // dont blame me, blame dndapi
+        // dont blame me, blame dndapi. ends line 160
         foreach ($content['starting_equipment_options'] as $equipmentOption){
             $optionsArr = [];
             array_push($dndClass['starting_equipment']['choose'], $equipmentOption['choose']);
@@ -87,6 +83,7 @@ class ClassController extends AbstractController
                     $equipmentWithQty = $option['quantity'] > 1 ? $option['equipment']['name'] . ' x' . strval($option['quantity']) : $option['equipment']['name'];
                     array_push($optionsArr, $equipmentWithQty);
                 }elseif(is_array($option)){
+                        $combinedArr = [];
                     foreach ($option as $op) {
                         if(isset($op['choose'])){
                             $url = 'https://www.dnd5eapi.co'.$op['from']['equipment_category']['url'];
@@ -106,17 +103,16 @@ class ClassController extends AbstractController
                             foreach ($urlRes['equipment'] as $ur) {
                                 array_push($arr, $ur['name']);
                             }
-                            array_push($optionsArr, $arr);
+                            array_push($optionsArr, ...$arr);
                             continue;
                         }
                         if (isset($op['quantity'])) {
                             $equipmentWithQty = $op['quantity'] > 1 ? $op['equipment']['name'] . ' x' . strval($op['quantity']) : $op['equipment']['name'];
-                            array_push($optionsArr, $equipmentWithQty);
+                            array_push($combinedArr, $equipmentWithQty);
                         } else {
                             if(isset($op['equipment_option'])){
                             $newUrl2 = 'https://www.dnd5eapi.co'.$op['equipment_option']['from']['equipment_category']['url'];
                             }else{
-                                dump($op);
                             $newUrl2 = 'https://www.dnd5eapi.co'.$op['url'];
                             }
                             $res = $this->client->request(
@@ -131,11 +127,13 @@ class ClassController extends AbstractController
                                 $urlRes = $res->toArray();
                             } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
                             }
-                            dump($urlRes['equipment']);
                             foreach ($urlRes['equipment'] as $ur) {
                                 array_push($optionsArr, $ur['name']);
                             }
                         }
+                    }
+                    if(count($combinedArr) > 0){
+                        array_push($optionsArr, implode(', ', $combinedArr));
                     }
                 }else{
                     $newUrl = 'https://www.dnd5eapi.co'.$option['equipment_option']['from']['equipment_category']['url'];
@@ -151,7 +149,6 @@ class ClassController extends AbstractController
                         $urlRes = $res->toArray();
                     } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
                     }
-                    dump($urlRes['equipment']);
                     foreach ($urlRes['equipment'] as $ur) {
                         array_push($optionsArr, $ur['name']);
                     }
@@ -159,72 +156,28 @@ class ClassController extends AbstractController
             }
             array_push($dndClass['starting_equipment']['options'], $optionsArr);
         }
+        // spellcasting
+        if(isset($content['spellcasting'])){
+            $spellcasting = ['spellcasting_ability' => $content['spellcasting']['spellcasting_ability']['name'], 'info' => []];
+            $combinedInfo = '';
+            foreach ($content['spellcasting']['info'] as $info){
+                $desc = '';
+                foreach ($info['desc'] as $line){
+                    $desc .= $line.PHP_EOL;
+                }
+                $combinedInfo .= $info['name'].PHP_EOL.$desc.PHP_EOL;
+            }
+            $spellcasting['info'] = $combinedInfo;
+            $dndClass['spellcasting'] = $spellcasting;
+        }
+
         dump($dndClass);
         $response = new Response();
 
+        $response->setContent(json_encode([$dndClass]));
         $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Access-Control-Allow-Origin', '*');
 
-        $response->setContent(json_encode($content));
-
-//        return $response;
+        return $response;
     }
 
-    /**
-     * @Route("/details", name="details")
-     * @param Request $request
-     * @return Response
-     * @throws TransportExceptionInterface
-     */
-    public function details(Request $request): Response
-    {
-//  get selected class
-        $class = $request->query->get('class');
-//  get class details from dnd api
-        $response = $this->client->request(
-            'GET',
-            "https://www.dnd5eapi.co".$class["url"]
-        );
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        try {
-            $contentType = $response->getHeaders()['content-type'][0];
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
-        // $contentType = 'application/json'
-        try {
-            $content = $response->getContent();
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
-        try {
-            $content = $response->toArray();
-        } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
-        }
-//  get class levels from dnd api
-        $response = $this->client->request(
-            'GET',
-            "https://www.dnd5eapi.co/api/classes/$class[index]/levels"
-        );
-        $statusCode = $response->getStatusCode();
-        try {
-            $contentType = $response->getHeaders()['content-type'][0];
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
-        try {
-            $levels = $response->getContent();
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
-        try {
-            $levels = $response->toArray();
-        } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
-        }
-
-        dump($content);
-        dump($levels);
-        return $this->render("class/details.html.twig", [
-            "class" => $content,
-            "levels" => $levels
-        ]);
-    }
 }

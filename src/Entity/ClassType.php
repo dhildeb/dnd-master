@@ -37,11 +37,6 @@ class ClassType
      */
     private $savingThrows = [];
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $startingEquipment = [];
-
     public function getId(): ?int
     {
         return $this->id;
@@ -95,15 +90,4 @@ class ClassType
         return $this;
     }
 
-    public function getStartingEquipment(): ?array
-    {
-        return $this->startingEquipment;
-    }
-
-    public function setStartingEquipment(?array $startingEquipment): self
-    {
-        $this->startingEquipment = $startingEquipment;
-
-        return $this;
-    }
 }

@@ -3,9 +3,45 @@
 {% block title %}Create New Character{% endblock %}
 
 {% block body %}
-    {{ form_start(character_form) }}
-    {{ form_widget(character_form) }}
-    <input class="btn btn-success mb-3" type="submit" name="create_character" value="Adventure!">
-    {{ form_end(character_form) }}
+    <form method="post" name="character">
+    <legend class="col-form-label">Character</legend>
+        <div class="form-group">
+            <label for="character_name" required>Name</label>
+            <input type="text" name="character_name" placeholder="Bordax the Fierce" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="character_class">Class</label>
+            <input type="text" name="character_class" class="form-control" value="{{ class['class_name'] }}" disabled>
+        </div>
+        <label for="proficiencies" class="required">Proficiencies</label>
+        {% for proficiency_group in class['proficiencies']['options'] %}
+            <div class="form-group">
+            {% if class['proficiencies']['choose'][loop.index0] > 1 %}
+                <label class="ml-3">Choose {{ class['proficiencies']['choose'][loop.index0] }}</label>
+            {% endif %}
+            <select name="proficiencies[]" class="form-control" {{ class['proficiencies']['choose'][loop.index0] > 1 ? 'multiple' : '' }} required>
+                {% for option in proficiency_group %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            </div>
+        {% endfor %}
+
+        <label for="equipment" class="required">Starting Equipment</label>
+        {% for equipment_group in class['starting_equipment']['options'] %}
+            <div class="form-group">
+            {% if class['starting_equipment']['choose'][loop.index0] > 1 %}
+                <label class="ml-3">Choose {{ class['starting_equipment']['choose'][loop.index0] }}</label>
+            {% endif %}
+            <select name="equipment[]" class="form-control" {{ class['starting_equipment']['choose'][loop.index0] > 1 ? 'multiple' : '' }} required>
+                {% for option in equipment_group %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            </div>
+        {% endfor %}
+
+        <input class="btn btn-success mb-3" type="submit" name="create_character" value="Adventure!">
+    </form>
 
 {% endblock %}

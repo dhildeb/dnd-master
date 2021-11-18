@@ -4,7 +4,7 @@
 
 {% block body %}
 
-        <h1 class="d-flex justify-content-center ">{{ class["name"] }}</h1>
+        <h1 class="d-flex justify-content-center ">{{ class["class_name"] }}</h1>
     <div class="row justify-content-end">
         <a class="btn btn-primary mb-3 mr-3" href="{{ path('character.create', {class: class}) }}">Make New Character</a>
     </div>
@@ -13,7 +13,7 @@
         <thead>
         <tr>
             <th scope="col">Name</th>
-            <th>{{ class["name"] }}</th>
+            <th>{{ class["class_name"] }}</th>
         </tr>
         </thead>
         <tbody>
@@ -26,55 +26,56 @@
             <tr>
                 <th scope="row">proficiencies</th>
                 <td>
-                    {% for p in class['proficiencies'] %}
-                        {{ p['name'] }},
+                    {% for p in class['proficiencies']['primary'] %}
+                        {{ p }},
                     {% endfor %}
                 </td>
             </tr>
             <tr>
                 <th scope="row">proficiency Choices</th>
+                {% for proficiency_options in class['proficiencies']['options'] %}
                 <td>
-                    <label>choose {{ class['proficiency_choices'][0]['choose'] }}</label>
+                    <label>choose {{ class['proficiencies']['choose'][loop.revindex0] }}</label>
                     <br>
                     <select multiple>
 
-                    {% for p in class['proficiency_choices'][0]['from'] %}
+                    {% for p in proficiency_options %}
                         <option>
-                        {{ p['name'] }}
+                        {{ p }}
                         </option>
                     {% endfor %}
                     </select>
                 </td>
+                {% endfor %}
             </tr>
             <tr>
                 <th scope="row">Saving Throws</th>
                 <td>
                     {% for s in class['saving_throws'] %}
-                        {{ s['name'] }},
+                        {{ s }},
                     {% endfor %}
                 </td>
             </tr>
             <tr>
                 <th scope="row">Starting Equipment</th>
                 <td>
-                    {% for se in class['starting_equipment'] %}
-                        {{ se['quantity'] }}:
-                        {{ se['equipment']['name'] }},
+                    {% for primary_equipment in class['starting_equipment']['primary'] %}
+                        {{ primary_equipment }},
                     {% endfor %}
                 </td>
             </tr>
             <tr>
                 <th scope="row">Starting Equipment Options</th>
                 <td class="d-flex">
-                    {% for se in class['starting_equipment_options'] %}
+                    {% for equipment_options in class['starting_equipment']['options'] %}
                         <div class="d-flex flex-column px-3">
                         <label>
-                            Choose {{ se['choose'] }}:
+                            Choose {{ class['starting_equipment']['choose'][loop.index0] }}:
                         </label>
                     <select multiple>
-                        {% for i in se['from'] %}
+                        {% for option in equipment_options %}
                             <option class="pr-3">
-                                {{ i['equipment']['name'] ?? i['equipment_option']['from']['equipment_category']['name'] }}
+                                {{ option }}
                             </option>
                         {% endfor %}
                     </select>
