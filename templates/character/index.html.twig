@@ -3,13 +3,13 @@
 {% block title %}Your Characters{% endblock %}
 
 {% block body %}
-    <div class="row">
+    <div class="row bg-gold">
         {% for char in characters %}
-            <div class="bg-light rounded shadow">
-                <b>{{ char['name'] }}</b>
-                <p>{{ char['type'] }}</p>
-                <p>{{ char['hp'] }}</p>
-                <p>{{ char['hitDie'] }}</p>
+            <div class="col-3 d-flex flex-column bg-light-gold rounded shadow">
+                <b>{{ char.name }}</b>
+                <em class="mb-3">the {{ char.type }}</em>
+                <p>HP: {{ char.hp }}</p>
+                <p>Hit Die: {{ char.hitDie }}</p>
             </div>
         {% endfor %}
     </div>

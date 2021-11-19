@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Character;
+use App\Repository\CharacterRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class CharacterController extends AbstractController
 {
     private $client;
+    private $charRepo;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, CharacterRepository $characterRepository)
     {
         $this->client = $client;
+        $this->charRepo = $characterRepository;
     }
 
     /**
@@ -27,9 +30,7 @@ class CharacterController extends AbstractController
      */
     public function index(): Response
     {
-        $characters = $this->getDoctrine()
-            ->getRepository(Character::class)
-            ->findAllCharacters();
+        $characters = $this->charRepo->getAll();
 
         dump($characters);
         return $this->render("character/index.html.twig", [

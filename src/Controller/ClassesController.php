@@ -53,7 +53,8 @@ class ClassesController extends AbstractController
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
         return $this->render("classes/index.html.twig", [
-            "classes" => $content["results"]
+            "classes" => $content["results"],
+            "pathUrl" => "classes"
         ]);
     }
 
@@ -65,23 +66,14 @@ class ClassesController extends AbstractController
      */
     public function details(Request $request): Response
     {
-//  get selected class
-        $class = $request->query->get('class');
-
-    $dndClass = $this->_refactorDndClassApi($class['index']);
-
+        $class = $request->query->get('item');
+        dump($class);
+        $dndClass = $this->_refactorDndClassApi($class['index']);
         dump($dndClass);
-
-//  get class levels from dnd api
         $response = $this->client->request(
             'GET',
             "https://www.dnd5eapi.co/api/classes/$class[index]/levels"
         );
-        $statusCode = $response->getStatusCode();
-        try {
-            $contentType = $response->getHeaders()['content-type'][0];
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
         try {
             $levels = $response->getContent();
         } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {

@@ -1,6 +1,7 @@
 :root{
-    --dark: rgba(102, 102, 102, 0.39);
-    --light: rgba(206, 202, 151, 0.411);
+    --dark-gold: rgba(102, 102, 102, 0.39);
+    --gold: rgba(206, 202, 151, 0.411);
+    --light-gold: rgb(247 242 182 / 41%);
 }
 
 a{
@@ -14,12 +15,15 @@ a:hover{
     cursor: pointer;
 }
 
-.bg-main{
-    background-color: rgba(102, 102, 102, 0.39);
+.bg-dark-gold{
+    background-color: var(--dark-gold);
 }
-.bg-side{
-    background-color: rgba(206, 202, 151, 0.411);
+.bg-gold{
+    background-color: var(--gold);
 }
 .d-grid{
     display: grid;
+}
+.bg-light-gold{
+    background-color: var(--light-gold);
 }

@@ -37,25 +37,17 @@ class EquipmentController extends AbstractController
             'GET',
             'https://www.dnd5eapi.co/api/equipment'
         );
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        try {
-            $contentType = $response->getHeaders()['content-type'][0];
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
-        // $contentType = 'application/json'
         try {
             $content = $response->getContent();
         } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
         }
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
         try {
             $content = $response->toArray();
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
-        dump($content);
         return $this->render("equipment/index.html.twig", [
-            "equipment" => $content["results"]
+            "equipment" => $content["results"],
+            "pathUrl" => "equipment"
         ]);
     }
 
@@ -67,29 +59,21 @@ class EquipmentController extends AbstractController
      */
     public function details(Request $request): Response
     {
-        $item = $request->query->get('item');
+        $equipment = $request->query->get('item');
 
         $response = $this->client->request(
             'GET',
-            "https://www.dnd5eapi.co".$item["url"]
+            "https://www.dnd5eapi.co".$equipment["url"]
         );
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        try {
-            $contentType = $response->getHeaders()['content-type'][0];
-        } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-        }
-        // $contentType = 'application/json'
+
         try {
             $content = $response->getContent();
         } catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
         }
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
         try {
             $content = $response->toArray();
         } catch (ClientExceptionInterface | DecodingExceptionInterface | TransportExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
         }
-        dump($content);
         return $this->render("equipment/details.html.twig", [
             "equipment" => $content
         ]);

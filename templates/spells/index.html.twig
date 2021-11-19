@@ -1,27 +1,6 @@
-{% extends 'base.html.twig' %}
+{% embed 'table_layout.html.twig' with {'items': spells} %}
 
-{% block title %}Hello SpellsController!{% endblock %}
+    {% block title %}Spells{% endblock %}
+    {% block table_title %} Spells {% endblock %}
 
-{% block body %}
-    <h1 class="d-flex justify-content-center">Spells</h1>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-        </tr>
-        </thead>
-        <tbody>
-
- {% for spell in spells %}
-        <tr>
-            <th scope="row">{{ loop.index }}</th>
-            <td>
-                <a href="{{ path('spells.details', {spell: spell}) }}">{{ spell["name"] }}</a>
-            </td>
-        </tr>
- {% endfor %}
-
-        </tbody>
-    </table>
-{% endblock %}
+{% endembed %}

@@ -9,7 +9,6 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Character|null find($id, $lockMode = null, $lockVersion = null)
  * @method Character|null findOneBy(array $criteria, array $orderBy = null)
- * @method Character[]    findAll()
  * @method Character[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CharacterRepository extends ServiceEntityRepository
@@ -22,17 +21,9 @@ class CharacterRepository extends ServiceEntityRepository
     /**
      * @return Character[]
      */
-    public function findAllCharacters(): array
+    public function getAll(): array
     {
-        $entityManager = $this->getEntityManager();
-
-        $query = $entityManager->createQuery(
-            'SELECT characters
-            FROM App\Entity\Character characters'
-        );
-
-        // returns an array of Character objects
-        return $query->getResult();
+        return $this->findAll();
     }
     // /**
     //  * @return Character[] Returns an array of Character objects

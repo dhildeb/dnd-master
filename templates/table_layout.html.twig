@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Title{% endblock %}
+
+{% block body %}
+    <h1 class="d-flex justify-content-center bg-gold m-0 pb-2 px-3">
+    {% block table_title %}
+        Table Title
+    {% endblock %}
+    </h1>
+    <table class="table table-striped bg-gold">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for item in items %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>
+                    <a href="{{ path(pathUrl ~ '.details', {item: item}) }}">{{ item["name"] }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
